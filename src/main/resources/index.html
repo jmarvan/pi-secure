@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>Security System Dashboard</title>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<link rel="manifest" href="manifest">
+		<link rel="shortcut icon" sizes="192x192" href="icon-hi.png">
+		<link rel="shortcut icon" sizes="128x128" href="icon-lo.png">
+		<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+		<link rel="stylesheet" type="text/css" href="style">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="code" ></script>
+	</head>
+	<body>
+
+		<div class="controlPanel">			
+			<form id="login" >
+				
+				<input type="password" id="ipin" name="pin" value="" />
+				
+				<div class="keypad">
+					<input type="button" id="bone" name="one" value="1" class="digit left-column"/>
+					<input type="button" id="btwo" name="two" value="2" class="digit"/>
+					<input type="button" id="bthree" name="three" value="3" class="digit right-column"/>
+					<input type="button" id="bfour" name="four" value="4" class="digit left-column"/>
+					<input type="button" id="bfive" name="five" value="5" class="digit"/>
+					<input type="button" id="bsix" name="six" value="6" class="digit right-column"/>
+					<input type="button" id="bseven" name="four" value="7" class="digit left-column"/>
+					<input type="button" id="beight" name="five" value="8" class="digit"/>
+					<input type="button" id="bnine" name="six" value="9" class="digit right-column"/>
+					<input type="button" id="bclear" name="clear" value="C" class="left-column"/>
+					<input type="button" id="bclear" name="clear" value="0" class="digit"/>
+					<input type="button" id="benter" name="enter" value="E" class="right-column"/>
+				</div>
+			</form>
+	
+			<form id="controls" class="hidden">
+				<div id="currentState" class="status">
+				</div>
+				<div>
+					<input type="button" id="barm" name="arm" value="Arm" data-state="ARMED"/>
+					<input type="button" id="bdisarm" name="disarm" value="Disarm" data-state="DISARMED"/>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
+

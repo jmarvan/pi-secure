@@ -1,0 +1,123 @@
+/* Copyright (C) 2016 synapticpath.com - All Rights Reserved
+
+ This file is part of Pi-Secure.
+
+    Pi-Secure is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Pi-Secure is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Pi-Secure.  If not, see <http://www.gnu.org/licenses/>.
+*/
+package com.synapticpath.raspberry;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.synapticpath.pisecure.Config;
+import com.synapticpath.pisecure.LoginService;
+import com.synapticpath.pisecure.SecuritySystemImpl;
+import com.synapticpath.pisecure.modules.LoginModule;
+import com.synapticpath.pisecure.modules.SMTPNotificationModule;
+import com.synapticpath.pisecure.modules.SimpleEventLoggerModule;
+import com.synapticpath.pisecure.modules.HttpSMSNotificationModule;
+
+/**
+ * Unit test for simple App.
+ */
+public class AppTest {
+	
+	private Config config;
+	
+	@Before
+	public void init() throws Exception {
+		config = new Config();
+		config.init(null);
+		
+		SecuritySystemImpl system = new SecuritySystemImpl();
+		system.configure(config);
+		config.setSystemModule(system);
+		
+		SimpleEventLoggerModule logger = new SimpleEventLoggerModule();
+		logger.configure(config);
+				
+		config.addModule(logger);
+	}
+		
+	
+	@Ignore
+	@Test
+	public void testMail() throws Exception {
+
+		 SMTPNotificationModule mailer = new SMTPNotificationModule();
+		 mailer.configure(config);
+		 //mailer.sendMessage("Security event");
+	}
+
+	@Ignore
+	@Test
+	public void testSms() throws Exception {
+
+		HttpSMSNotificationModule sender = new HttpSMSNotificationModule();
+		sender.configure(config);
+		//sender.sendMessage("Security event");
+	}
+	
+	@Test
+	public void testLoginService() throws Exception {
+				
+		LoginService li = new LoginModule();
+		((LoginModule)li).configure(config);
+		
+		loginFail(li, "1");
+		loginFail(li,"2");
+		loginFail(li,"3");
+		loginFail(li,"1234");  //Even though correct pin supplied, login still fails as lock occurs
+		Thread.sleep(1050);
+		
+        
+		loginFail(li,"5");
+		loginFail(li,"6");
+		loginFail(li,"7");
+		loginFail(li, "1234");
+        
+        Thread.sleep(1050);
+        
+        loginFail(li,"9");
+        loginFail(li,"10");
+        loginSuccess(li, "1234");  
+
+        loginFail(li,"11");
+        loginFail(li,"12");
+        loginFail(li,"13");
+        loginFail(li, "1234");
+        
+	}
+	
+	private void loginFail(LoginService li, String text) {
+		
+		String token = li.login(text);
+		assertNull(token);
+		
+	}
+	
+	private String loginSuccess(LoginService li, String text) {
+		
+		String token = li.login(text);
+		assertNotNull(token);
+		
+		return token;
+		
+	}
+
+}
