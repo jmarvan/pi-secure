@@ -12,7 +12,7 @@
 	</head>
 	<body>
 
-		<div class="controlPanel">			
+		<div id="controlPanel" class="controlPanel">			
 			<form id="login" >
 				
 				<input type="password" id="ipin" name="pin" value="" />
@@ -39,8 +39,21 @@
 				<div>
 					<input type="button" id="barm" name="arm" value="Arm" data-state="ARMED"/>
 					<input type="button" id="bdisarm" name="disarm" value="Disarm" data-state="DISARMED"/>
+					
+					<a href="#" onclick="showEvents();return false;" >Show Events</a>
 				</div>
 			</form>
+		</div>
+		<div id="events" class="hidden">
+			<table id="eventTable" class="template" cellpadding="2">
+				<tr style="text-align:left;"><th>Time</th><th>Source</th><th>Type</th><th>State</th></tr>
+				<tr data-template="repeat"><td>@{time}</td><td>@{source}</td><td>@{type}</td><td class="@{state}">&nbsp;</td></tr>
+				<tr><td colspan="2">
+						<input type="button" name="previous" onclick="getEvents('eventTable', @{previous})" value="&#x25C0;" />
+						Page @{page} of @{totalPages}
+						<input type="button" name="next" onclick="getEvents('eventTable', @{next})" value="&#x25B6;" />
+				</td></tr>
+			</table>
 		</div>
 	</body>
 </html>

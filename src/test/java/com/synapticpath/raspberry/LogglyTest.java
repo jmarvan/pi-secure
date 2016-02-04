@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.junit.Ignore;
@@ -29,8 +28,9 @@ import org.junit.Test;
 
 import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
-import com.synapticpath.pisecure.SystemEvent;
-import com.synapticpath.pisecure.SystemEvent.Type;
+import com.synapticpath.pisecure.model.PaginatedList;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SystemEvent.Type;
 import com.synapticpath.pisecure.modules.LogglyEventLoggerModule;
 
 /**
@@ -54,11 +54,11 @@ public class LogglyTest {
 		
 		//Loggly has some time delay before being able to retrieve posted event, therefore
 		//This is not a good way to test the api ......
-		List<SystemEvent> events = logger.getEvents(0, 0);
-		assertNotNull(events);
-		assertTrue(events.size() > 0);
+		PaginatedList<SystemEvent> pl = logger.getEvents(0, 10);
+		assertNotNull(pl);
+		assertTrue(pl.getItems().size() > 0);
 		
-		SystemEvent retrievedEvent = events.iterator().next();
+		SystemEvent retrievedEvent = pl.getItems().iterator().next();
 		assertEquals(retrievedEvent.getTime(), event.getTime());
 		assertEquals(retrievedEvent.getSource(), event.getSource());
 				

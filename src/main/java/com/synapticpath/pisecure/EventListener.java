@@ -17,6 +17,8 @@
 */
 package com.synapticpath.pisecure;
 
+import com.synapticpath.pisecure.model.SystemEvent;
+
 /**
  * Each Module that implements this interface will be notified of events.
  * 

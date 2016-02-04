@@ -19,7 +19,8 @@ package com.synapticpath.pisecure;
 
 import java.util.Set;
 
-import com.synapticpath.pisecure.SystemEvent.Type;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SystemEvent.Type;
 import com.synapticpath.utils.Reflection;
 
 /**

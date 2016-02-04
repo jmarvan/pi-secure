@@ -17,29 +17,14 @@
 */
 package com.synapticpath.pisecure;
 
-import java.util.function.Consumer;
-
-import com.synapticpath.pisecure.model.SystemEvent;
-
 /**
- * SecuritySystem interface defines public methods to which various system
- * Modules report events.
- * SecuritySystem implementation is responsible for evaluating the events
- * and will propagate them to the remainder of the system.  
+ * Exportable Objects have toJson method that serialized the object
+ * into that format. 
  * 
  * @author jmarvan@synapticpath.com
  *
  */
-public interface SecuritySystem extends Consumer<SystemEvent> {
-	
-	public static enum SystemState {
-		ARMED, ALARM, DISARMED;
+public interface Exportable {
 
-		public boolean isArmed() {
-			return this.equals(ARMED);
-		}
-	}
-	
-	public SystemState getState(); 
-
+	String toJson();
 }

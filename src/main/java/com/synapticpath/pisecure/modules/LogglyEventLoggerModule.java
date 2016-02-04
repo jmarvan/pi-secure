@@ -35,8 +35,9 @@ import com.synapticpath.pisecure.Disableable;
 import com.synapticpath.pisecure.EventLogger;
 import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
-import com.synapticpath.pisecure.SystemEvent;
-import com.synapticpath.pisecure.SystemEvent.Type;
+import com.synapticpath.pisecure.model.PaginatedList;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SystemEvent.Type;
 
 /**
  * This module is responsible for sending incoming events to Loggly logging service.
@@ -101,10 +102,14 @@ public class LogglyEventLoggerModule implements Disableable, EventLogger, Config
 	}
 
 	@Override
-	public List<SystemEvent> getEvents(int offset, int size) {
-		// TODO design interface and object structure
+	public PaginatedList<SystemEvent> getEvents(int offset, int size) {
+
 		try {
-			return search("*"/*"tag:"+tag*/, 0, 1);
+			
+			int pageNumber = offset == 0 ? 0: offset / size;
+			
+			return search("*"/*"tag:"+tag*/, pageNumber, size);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -146,7 +151,7 @@ public class LogglyEventLoggerModule implements Disableable, EventLogger, Config
 		}
 	}
 	
-	private List<SystemEvent> search(String query, int page, int pageSize) throws Exception {
+	private PaginatedList<SystemEvent> search(String query, int page, int pageSize) throws Exception {
 		
 		URL url = new URL(String.format(searchRequestUrl, query, "-1m","now", pageSize));
 		
@@ -180,7 +185,7 @@ public class LogglyEventLoggerModule implements Disableable, EventLogger, Config
 		System.out.println(sb.toString());
 		
 		obj = new JSONObject(sb.toString());
-		System.out.println("TotalEvents :"+obj.getInt("total_events"));
+		int total = obj.getInt("total_events");
 		
 		List<SystemEvent> items = new ArrayList<>();
 		JSONArray array = obj.getJSONArray("events");		
@@ -193,8 +198,8 @@ public class LogglyEventLoggerModule implements Disableable, EventLogger, Config
 		
 		items.forEach(item -> System.out.println(item));
 		
-		//TODO wrap items, so that total records can be exported + other stuff
-		return items;
+		PaginatedList<SystemEvent> pl = PaginatedList.create(total, page * pageSize, pageSize, items);
+		return pl;
 		
 	}
 	

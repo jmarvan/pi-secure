@@ -29,9 +29,9 @@ import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.Disableable;
 import com.synapticpath.pisecure.EventListener;
 import com.synapticpath.pisecure.Module;
-import com.synapticpath.pisecure.SecurityEvent;
-import com.synapticpath.pisecure.SecurityEvent.Severity;
-import com.synapticpath.pisecure.SystemEvent;
+import com.synapticpath.pisecure.model.SecurityEvent;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SecurityEvent.Severity;
 
 /**
  * This module is responsible for sending a Text message through a Http sms gateway service when

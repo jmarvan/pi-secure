@@ -5,8 +5,10 @@ body {background-color: #74AFAD;margin:0;}
 .alarm { background-color: red; animation:blink 1s step-end infinite;}
 .disarmed { background-color: green;}
 @keyframes blink {0% {background-color: red} 50% {background-color: darkred}}
+.template { display:none;}
 
 @media only screen and (max-width: 767px) {
+	th, td { padding: 2px; }
 	.controlPanel { 
 		background-color: #ECECEA;
 		border: 1px solid grey; 
@@ -57,6 +59,7 @@ body {background-color: #74AFAD;margin:0;}
 
 @media only screen and (min-width: 768px),
 screen and (min-width: 600px) and (orientation: portrait) {
+	th, td { padding: 4px; }
     .controlPanel { 
     	font-size:25px;
 		background-color: #ECECEA;

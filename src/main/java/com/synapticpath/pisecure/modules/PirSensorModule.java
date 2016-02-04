@@ -32,7 +32,7 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.Module;
-import com.synapticpath.pisecure.SystemEvent;
+import com.synapticpath.pisecure.model.SystemEvent;
 
 /**
  * This module interfaces with Raspberry PI GPIO pins and configures them for

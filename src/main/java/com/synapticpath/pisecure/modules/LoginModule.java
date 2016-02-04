@@ -24,10 +24,10 @@ import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.LoginService;
 import com.synapticpath.pisecure.Module;
-import com.synapticpath.pisecure.SecurityEvent;
-import com.synapticpath.pisecure.SecurityEvent.Severity;
-import com.synapticpath.pisecure.SystemEvent;
-import com.synapticpath.pisecure.SystemEvent.Type;
+import com.synapticpath.pisecure.model.SecurityEvent;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SecurityEvent.Severity;
+import com.synapticpath.pisecure.model.SystemEvent.Type;
 
 /** 
  * The LoginModule provides means for users to authenticate themselves 

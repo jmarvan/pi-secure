@@ -15,12 +15,13 @@
     You should have received a copy of the GNU General Public License
     along with Pi-Secure.  If not, see <http://www.gnu.org/licenses/>.
 */
-package com.synapticpath.pisecure;
+package com.synapticpath.pisecure.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.synapticpath.pisecure.Exportable;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
 
 /**
@@ -28,7 +29,7 @@ import com.synapticpath.pisecure.SecuritySystem.SystemState;
  * elevate the event to {@link SecurityEvent}.
  *
  */
-public class SystemEvent {	
+public class SystemEvent implements Exportable {	
 	
 	private static DateFormat dateFormat;
 	

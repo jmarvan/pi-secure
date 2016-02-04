@@ -17,7 +17,8 @@
 */
 package com.synapticpath.pisecure;
 
-import java.util.List;
+import com.synapticpath.pisecure.model.PaginatedList;
+import com.synapticpath.pisecure.model.SystemEvent;
 
 /**
  * Event logger is responsible for writing system logs as well as subsequent retrieval and filtering.
@@ -27,6 +28,6 @@ import java.util.List;
  */
 public interface EventLogger extends EventListener {		
 		
-	public List<SystemEvent> getEvents(int offset, int size);
+	public PaginatedList<SystemEvent> getEvents(int offset, int size);
 
 }

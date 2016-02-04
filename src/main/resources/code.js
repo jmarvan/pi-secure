@@ -17,10 +17,16 @@ var showLogin = function() {
 	$("#ipin").val('');
 	$("#controls").addClass('hidden');
 	$("#login").removeClass('hidden');
+	$("#controlPanel").addClass('hidden');
 }
 var showControls = function() {
 	$("#login").addClass('hidden');
 	$("#controls").removeClass('hidden');
+}
+var showEvents = function() {	
+	getEvents('eventTable');
+	$("#controlPanel").addClass('hidden');
+	$("#events").removeClass('hidden');
 }
 var refreshState = function(message) {	
 	var data = JSON.parse(message.data);
@@ -60,6 +66,92 @@ var login = function() {
 		}
 	});
 }
+var getEvents = function(id, offset) {
+ 
+	$.ajax({
+		url: "event",
+		type: "GET",
+		data: {"offset": offset ? offset : 0},
+		success: function (data) {
+			var template = document.getElementById(id);
+			cloneNode(template, null, JSON.parse(data));			
+		},
+		error: function (jqXHR) {
+			displayError(jqXHR);							
+		}
+	});
+	
+}
+var compileTemplate = function(template) {
+	var exp = /(\@\{[A-Za-z0-9 _.,!"'/$]+\})/g;
+	var replExp = /(\@\{)([A-Za-z0-9 _.,!"'/$]+)(\})/g;
+	var parts = template.split(exp);
+
+	for (var i=0 ; i<parts.length; i++) {
+		if (parts[i].match(exp)) {
+			var val = parts[i].replace(replExp, "$2");
+			parts[i] = new Object();
+			parts[i].value = val;
+		}
+	}
+	return parts;
+}
+var applyValues = function(template, data) {
+	var result = ""
+	template.forEach(function(part){
+		if (typeof part == "string") {
+			result += part;
+		} else {
+			result += data[part.value];
+		}
+	});
+
+	return result;
+}
+var appendClone = function(copy, parent, data) {
+	if (copy.removeAttribute) {
+		if (copy.getAttribute("id") != null) {
+			copy.setAttribute("id", copy.getAttribute("id")+"-clone")
+		}
+		copy.removeAttribute("class");
+		for (var i=0; i<copy.attributes.length; i++) {
+			var newValue = applyValues(compileTemplate(copy.attributes[i].value), data);
+			copy.setAttribute(copy.attributes[i].name, newValue);
+		}
+	}
+	parent.appendChild(copy);
+}
+var cloneNode = function(node, parent, data) {
+	if (parent == null) {		
+		parent = node.parentNode;
+		var clone = document.getElementById(node.getAttribute("id")+"-clone");
+		if (clone) {
+			parent.removeChild(clone);
+		}
+	}	
+	
+	if (node.nodeType == 3 || node.nodeType == 2) {
+		var value = applyValues(compileTemplate(node.nodeValue), data);
+		var copy = node.cloneNode(false);
+		copy.nodeValue = value;
+		appendClone(copy, parent, data);
+	} else if (node.nodeType == 1) {
+		if (node.getAttribute('data-template') != null)	 {
+			var template = compileTemplate(node.innerHTML);
+			for (var i=0; i<data.data.length; i++) {
+				var copy = node.cloneNode(false);
+				copy.innerHTML = applyValues(template, data.data[i]);
+				appendClone(copy, parent, data.data[i]);
+			}
+		} else {
+			var copy = node.cloneNode(false);
+			appendClone(copy, parent, data);
+			for (var i=0;i<node.childNodes.length;i++){
+				cloneNode(node.childNodes[i], copy, data);
+			}
+		}		
+	}
+}
 var displayError = function(jqXHR) {
 	alert("Server responds with http"+jqXHR.status+".\nClick OK to reload the page, if problem persists, you are screwed.");
 	location.reload();
@@ -91,4 +183,5 @@ $(document).ready(function() {
 	webSocket.onmessage = function (msg) { refreshState(msg); };
 	webSocket.onclose = function () { location.reload(); };
 	window.scrollTo(0,1);
+	getEvents('eventTable');
 });	

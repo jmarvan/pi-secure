@@ -24,7 +24,8 @@ import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.EventLogger;
 import com.synapticpath.pisecure.Module;
-import com.synapticpath.pisecure.SystemEvent;
+import com.synapticpath.pisecure.model.PaginatedList;
+import com.synapticpath.pisecure.model.SystemEvent;
 
 /**
  * This is the default event logger... it stores incoming events in a "queue" of
@@ -54,7 +55,7 @@ public class SimpleEventLoggerModule implements EventLogger, Configurable {
     }
     
     
-    public synchronized List<SystemEvent> getEvents(int offset, int size) {
+    public synchronized PaginatedList<SystemEvent> getEvents(int offset, int size) {
     	
     	List<SystemEvent> result = new ArrayList<>();
     	int index = events.size() - offset - 1;
@@ -63,7 +64,7 @@ public class SimpleEventLoggerModule implements EventLogger, Configurable {
     		result.add(event);
     	}
     	
-    	return result;
+    	return PaginatedList.create(events.size(), offset, size, result);
     }
 	
 	public List<SystemEvent> getAllEvents() {

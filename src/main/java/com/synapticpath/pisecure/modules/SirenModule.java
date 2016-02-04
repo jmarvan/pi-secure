@@ -28,9 +28,9 @@ import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.Disableable;
 import com.synapticpath.pisecure.EventListener;
 import com.synapticpath.pisecure.Module;
-import com.synapticpath.pisecure.SecurityEvent;
-import com.synapticpath.pisecure.SystemEvent;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
+import com.synapticpath.pisecure.model.SecurityEvent;
+import com.synapticpath.pisecure.model.SystemEvent;
 
 /**
  * This module configures Raspberry GPIO pin for output to drive a

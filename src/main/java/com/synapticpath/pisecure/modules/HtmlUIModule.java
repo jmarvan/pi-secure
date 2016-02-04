@@ -24,19 +24,17 @@ import static spark.Spark.webSocket;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.servlet.ServletOutputStream;
 
 import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.EventListener;
-import com.synapticpath.pisecure.EventLogger;
 import com.synapticpath.pisecure.LoginService;
 import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
-import com.synapticpath.pisecure.SystemEvent;
-import com.synapticpath.pisecure.SystemEvent.Type;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SystemEvent.Type;
 
 import spark.Request;
 import spark.Response;
@@ -44,6 +42,7 @@ import spark.utils.IOUtils;
 
 /**
  * This module uses spark to provide HTML ui for controlling the SecuritySystem.
+ * 
  * @author jmarvan@synapticpath.com
  *
  */
@@ -68,7 +67,6 @@ public class HtmlUIModule implements Configurable, EventListener {
 		}
 	}
 
-	// TODO move this to separate class.
 	protected void setupWeb() {
 
 		WebSocketHandler.config = config;
@@ -122,19 +120,10 @@ public class HtmlUIModule implements Configurable, EventListener {
 			return "";
 		});
 		get("/event", (req, res) -> {
-			// TODO move this to new structure, that will report total events
-			// available.
-			StringBuilder sb = new StringBuilder("[");
-			EventLogger logger = config.getModule(SimpleEventLoggerModule.class);
-			Iterator<SystemEvent> iter = logger.getEvents(0, 300).iterator();
-			while (iter.hasNext()) {
-				sb.append(iter.next().toJson());
-				if (iter.hasNext()) {
-					sb.append(",\r\n");
-				}
-			}
-			sb.append("]");
-			return sb.toString();
+			//TODO check token, this is a locked feature.
+			String strOffset = req.queryParams("offset");
+			int offset = strOffset == null ? 0 : Integer.parseInt(strOffset);
+			return config.getModule(SimpleEventLoggerModule.class).getEvents(offset, 10).toJson();
 		});
 	}
 	

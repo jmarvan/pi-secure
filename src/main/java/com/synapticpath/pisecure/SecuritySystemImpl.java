@@ -21,8 +21,10 @@ import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.synapticpath.pisecure.SecurityEvent.Severity;
-import com.synapticpath.pisecure.SystemEvent.Type;
+import com.synapticpath.pisecure.model.SecurityEvent;
+import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.pisecure.model.SecurityEvent.Severity;
+import com.synapticpath.pisecure.model.SystemEvent.Type;
 
 /**
  * This is the brain of the Pi-Secure security system.  It evaluates events sent
