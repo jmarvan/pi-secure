@@ -1,13 +1,23 @@
-html {margin:0; padding:0;}
-body {background-color: #74AFAD;margin:0;}
+body {background-color: #74AFAD;}
 .hidden { display:none; }
 .armed { background-color: red;}
 .alarm { background-color: red; animation:blink 1s step-end infinite;}
 .disarmed { background-color: green;}
 @keyframes blink {0% {background-color: red} 50% {background-color: darkred}}
 .template { display:none;}
+html *{font-size:17px;font-family:serif;font-family: sans-serif; font-family: monospace; }
+button {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+}
+.events { width:100%; }
 
 @media only screen and (max-width: 767px) {
+	html *{font-size:0.94em;}
 	th, td { padding: 2px; }
 	.controlPanel { 
 		background-color: #ECECEA;
@@ -39,7 +49,6 @@ body {background-color: #74AFAD;margin:0;}
 		margin:10px 0 10px 65px;
 	}
 	.keypad input {
-		font-size: 20px;
 		width: 57px;
 		height: 57px;
 		margin-bottom:8px;
@@ -60,12 +69,13 @@ body {background-color: #74AFAD;margin:0;}
 @media only screen and (min-width: 768px),
 screen and (min-width: 600px) and (orientation: portrait) {
 	th, td { padding: 4px; }
-    .controlPanel { 
-    	font-size:25px;
+    .controlPanel {    
+    	height:500px; 	
 		background-color: #ECECEA;
-		border: 1px solid grey; 
+		border: 1px solid grey; 		
+	}
+	.controlPanel, .eventPanel {
 		width:500px;
-		height:500px;
 		position:absolute;
 		left: 50%;
 		top: 50%;
@@ -79,7 +89,6 @@ screen and (min-width: 600px) and (orientation: portrait) {
 		margin:30px 0 30px 0px;
 	}
 	#ipin {
-		font-size: 25px;
 		color:white;
 		display: block;
 		width: 300px;
@@ -92,7 +101,6 @@ screen and (min-width: 600px) and (orientation: portrait) {
 		margin:10px 0 10px 100px;
 	}
 	.keypad input {
-		font-size: 25px;
 		width: 88px;
 		height: 88px;
 		margin-bottom:8px;
@@ -105,8 +113,7 @@ screen and (min-width: 600px) and (orientation: portrait) {
 	}
 	
 	#controls input {
-		font-size:25px;
-		width: 146px;
+		width: 145px;
 		height: 50px;
 	}
 }

@@ -43,7 +43,7 @@ public class SimpleEventLoggerModule implements EventLogger, Configurable {
 
 	@Override
 	public void configure(Config config) throws Exception {
-		limit = Integer.parseInt(config.getProperty("simple.event.logger.size", "100"));
+		limit = Integer.parseInt(config.getProperty("simple.event.logger.size", "300"));
 	}	
 
     @Override

@@ -78,7 +78,7 @@ public class PaginatedList<T extends Exportable> {
 		sb.append("\"pageSize\":").append(pageSize).append(",\r\n");
 		sb.append("\"total\":").append(total).append(",\r\n");
 		sb.append("\"totalPages\":").append(total % pageSize > 0 ? total/pageSize+1 : total/pageSize).append(",\r\n");
-		sb.append("\"next\":").append(offset+pageSize > total ? offset : offset+pageSize).append(",\r\n");
+		sb.append("\"next\":").append(offset+pageSize >= total ? offset : offset+pageSize).append(",\r\n");
 		sb.append("\"previous\":").append(offset-pageSize < 0 ? 0 : offset-pageSize).append(",\r\n");
 		sb.append("\"data\":[\r\n");
 

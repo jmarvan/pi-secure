@@ -133,7 +133,6 @@ public class HtmlUIModule implements Configurable, EventListener {
 
 	private void sendResource(Request req, Response res, String resourceName, boolean checkModified) throws Exception {
 
-		System.out.println("UI Module serving : "+resourceName);
 		if (checkModified) {
 			File file = new File(getClass().getResource(resourceName).getFile());
 			String value = req.headers("if-modified-since");

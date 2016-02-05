@@ -1,11 +1,12 @@
 <html>
 	<head>
 		<title>Security System Dashboard</title>
+		<meta charset="utf-8"/>
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 		<link rel="manifest" href="manifest">
 		<link rel="shortcut icon" sizes="192x192" href="icon-hi.png">
-		<link rel="shortcut icon" sizes="128x128" href="icon-lo.png">
-		<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+		<link rel="shortcut icon" sizes="128x128" href="icon-lo.png">		
 		<link rel="stylesheet" type="text/css" href="style">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="code" ></script>
@@ -37,21 +38,20 @@
 				<div id="currentState" class="status">
 				</div>
 				<div>
-					<input type="button" id="barm" name="arm" value="Arm" data-state="ARMED"/>
-					<input type="button" id="bdisarm" name="disarm" value="Disarm" data-state="DISARMED"/>
-					
-					<a href="#" onclick="showEvents();return false;" >Show Events</a>
+					<input type="button" id="barm" name="arm" value="Arm" data-state="ARMED" />
+					<input type="button" id="bdisarm" name="disarm" value="Disarm" data-state="DISARMED" />					
+					<a href="#" onclick="showEvents();return false;" style="padding:1em;position:absolute; bottom:0; right:0;">Show Events</a>
 				</div>
 			</form>
 		</div>
-		<div id="events" class="hidden">
-			<table id="eventTable" class="template" cellpadding="2">
-				<tr style="text-align:left;"><th>Time</th><th>Source</th><th>Type</th><th>State</th></tr>
-				<tr data-template="repeat"><td>@{time}</td><td>@{source}</td><td>@{type}</td><td class="@{state}">&nbsp;</td></tr>
-				<tr><td colspan="2">
-						<input type="button" name="previous" onclick="getEvents('eventTable', @{previous})" value="&#x25C0;" />
+		<div id="events" class="hidden eventPanel">
+			<table id="eventTable" class="events template" cellpadding="2">
+				<tr><th>Time</th><th>Source</th><th>Type</th></tr>
+				<tr data-template="repeat" data-datasource="data"><td>@{time}</td><td>@{source}</td><td class="@{state}">@{type}</td></tr>
+				<tr><td colspan="3" style="text-align:center;">
+						<button name="previous" onclick="getEvents('eventTable', @{previous})">&#x25C0;</button>
 						Page @{page} of @{totalPages}
-						<input type="button" name="next" onclick="getEvents('eventTable', @{next})" value="&#x25B6;" />
+						<button name="next" onclick="getEvents('eventTable', @{next})">&#x25B6;</button>
 				</td></tr>
 			</table>
 		</div>

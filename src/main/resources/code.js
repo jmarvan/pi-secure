@@ -113,7 +113,7 @@ var appendClone = function(copy, parent, data) {
 		if (copy.getAttribute("id") != null) {
 			copy.setAttribute("id", copy.getAttribute("id")+"-clone")
 		}
-		copy.removeAttribute("class");
+		copy.className = !copy.className ? copy.className : copy.className.replace(/^(.*)(template)(.*)$/, "$1$3");
 		for (var i=0; i<copy.attributes.length; i++) {
 			var newValue = applyValues(compileTemplate(copy.attributes[i].value), data);
 			copy.setAttribute(copy.attributes[i].name, newValue);
@@ -138,9 +138,10 @@ var cloneNode = function(node, parent, data) {
 	} else if (node.nodeType == 1) {
 		if (node.getAttribute('data-template') != null)	 {
 			var template = compileTemplate(node.innerHTML);
-			for (var i=0; i<data.data.length; i++) {
+			var dataSource = node.getAttribute("data-datasource");
+			for (var i=0; i<data[dataSource].length; i++) {
 				var copy = node.cloneNode(false);
-				copy.innerHTML = applyValues(template, data.data[i]);
+				copy.innerHTML = applyValues(template, data[dataSource][i]);
 				appendClone(copy, parent, data.data[i]);
 			}
 		} else {
