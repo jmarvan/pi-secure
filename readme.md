@@ -9,7 +9,7 @@ This project has been created with the hopes that it will provide resources to h
 ##Feature Roadmap
 
 ### Version 1.0 features
-1. Add Configurable PowerUp/Down Module.
+1. ~~Add Configurable PowerUp/Down Module.~~
 2. ~~Build event browser UI.~~
 3. Add On-Battery operation detection Module + handle warnings.
 4. Implement delayed system arming.

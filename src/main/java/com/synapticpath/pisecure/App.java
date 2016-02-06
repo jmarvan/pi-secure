@@ -72,7 +72,7 @@ public class App {
 		
 		return Reflection.getTypesWithAnnotation("com.synapticpath.pisecure.modules", Module.class);
 		 
-	}
+	}	
 	
 	
 	private <T> T loadModule(Class<T> cls) throws Exception {
@@ -88,14 +88,15 @@ public class App {
 	
 	
 	public void shutdown() {
-		//TODO broadcast shutdown event.		
+		system.accept(SystemEvent.create(Type.SHUTDOWN, "system"));		
 	}		
 	
 	
     public static void main( String ... args ) throws Exception {
     	
-        App app = new App();
+        final App app = new App();
         app.init(args == null || args.length == 0 ? null : args[0]);
+     
         
         while (keepRunning) {
         	Thread.sleep(500);

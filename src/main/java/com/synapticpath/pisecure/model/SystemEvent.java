@@ -45,6 +45,7 @@ public class SystemEvent implements Exportable {
 	
 	public static enum Type {
 		STARTUP,
+		SHUTDOWN,
 		SENSOR,
 		LOGIN_LOCKED,
 		LOGIN_BLOCKED,
