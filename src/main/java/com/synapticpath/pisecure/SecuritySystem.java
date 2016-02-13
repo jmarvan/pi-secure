@@ -33,11 +33,20 @@ import com.synapticpath.pisecure.model.SystemEvent;
 public interface SecuritySystem extends Consumer<SystemEvent> {
 	
 	public static enum SystemState {
-		ARMED, ALARM, DISARMED;
+		DELAYED_ARM, ARMED, DELAYED_ALARM, ALARM, DISARMED;
 
 		public boolean isArmed() {
-			return this.equals(ARMED);
+			return this.equals(ARMED) || this.equals(DELAYED_ALARM);
 		}
+		
+		public boolean isDelayedAlarm() {
+			return this.equals(DELAYED_ALARM);
+		}
+		
+		public boolean isAlarm() {
+			return this.equals(ALARM);
+		}
+
 	}
 	
 	public SystemState getState(); 

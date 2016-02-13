@@ -16,8 +16,9 @@ var showLogin = function() {
 	loginToken = null;
 	$("#ipin").val('');
 	$("#controls").addClass('hidden');
+	$("#events").addClass('hidden');
 	$("#login").removeClass('hidden');
-	$("#controlPanel").addClass('hidden');
+	$("#controlPanel").removeClass('hidden');
 }
 var showControls = function() {
 	$("#login").addClass('hidden');
@@ -71,7 +72,7 @@ var getEvents = function(id, offset) {
 	$.ajax({
 		url: "event",
 		type: "GET",
-		data: {"offset": offset ? offset : 0},
+		data: {"offset": offset ? offset : 0, "token":loginToken},
 		success: function (data) {
 			var template = document.getElementById(id);
 			cloneNode(template, null, JSON.parse(data));			
@@ -183,6 +184,5 @@ $(document).ready(function() {
 	webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/state/");
 	webSocket.onmessage = function (msg) { refreshState(msg); };
 	webSocket.onclose = function () { location.reload(); };
-	window.scrollTo(0,1);
-	getEvents('eventTable');
+	window.scrollTo(0,1);	
 });	

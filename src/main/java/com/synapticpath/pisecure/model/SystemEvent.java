@@ -39,7 +39,7 @@ public class SystemEvent implements Exportable {
 	
 	private SystemState state;
 	
-	private Long delay;
+	private long delay;
 	
 	private Type type;
 	
@@ -51,6 +51,9 @@ public class SystemEvent implements Exportable {
 		LOGIN_BLOCKED,
 		LOGIN_SUCCESS,
 		LOGIN_INCORRECT,
+		BATTERY_ON,
+		BATTERY_OFF,
+		BATTERY_CRITICAL,
 		SETSTATE
 	}
 

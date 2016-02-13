@@ -22,8 +22,10 @@ import static spark.Spark.post;
 import static spark.Spark.webSocket;
 
 import java.io.File;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Supplier;
 
 import javax.servlet.ServletOutputStream;
 
@@ -105,26 +107,34 @@ public class HtmlUIModule implements Configurable, EventListener {
 			return token;
 		});
 		post("/state", (req, res) -> {
-
-			String token = req.queryParams("token");
-			String value = req.queryParams("value");
-
-			if (config.getModule(LoginService.class).checkLoginToken(token)) {
+			
+			return withLoginToken(req, res, () -> {
+				String value = req.queryParams("value");
 				SystemState state = SystemState.valueOf(value.toUpperCase());
 				SystemEvent event = SystemEvent.create(SystemEvent.Type.SETSTATE, "ui", state);
 				config.getSystemModule().accept(event);
 
 				return "";
-			}
-			res.status(401);
-			return "";
+			});			
 		});
-		get("/event", (req, res) -> {
-			//TODO check token, this is a locked feature.
-			String strOffset = req.queryParams("offset");
-			int offset = strOffset == null ? 0 : Integer.parseInt(strOffset);
-			return config.getModule(SimpleEventLoggerModule.class).getEvents(offset, 10).toJson();
+		get("/event", (req, res) -> {			
+			return withLoginToken(req, res, () -> {
+				String strOffset = req.queryParams("offset");
+				int offset = strOffset == null ? 0 : Integer.parseInt(strOffset);
+				return config.getModule(SimpleEventLoggerModule.class).getEvents(offset, 10).toJson();
+			}); 
 		});
+	}
+	
+	private String withLoginToken(Request req, Response res, Supplier<String> supplier) {
+		
+		String token = req.queryParams("token");
+		
+		if (config.getModule(LoginService.class).checkLoginToken(token)) {			
+			return supplier.get();			
+		}
+		res.status(401);
+		return "";		
 	}
 	
 	private void sendResource(Request req, Response res, String resourceName) throws Exception {
@@ -134,20 +144,22 @@ public class HtmlUIModule implements Configurable, EventListener {
 	private void sendResource(Request req, Response res, String resourceName, boolean checkModified) throws Exception {
 
 		if (checkModified) {
-			File file = new File(getClass().getResource(resourceName).getFile());
-			String value = req.headers("if-modified-since");
+			URL url = getClass().getResource(resourceName);
+			Date lastModified = new Date(url.openConnection().getLastModified());
+					
+			String value = req.headers("If-Modified-Since");
 			
-			if (value != null) {
+			if (value != null && !value.isEmpty()) {
 				
 				Date d = format.parse(value);
 				
-				if (file.lastModified() <= d.getTime()) {
+				if (lastModified.getTime() <= d.getTime()) {
 					res.status(304);
 					return;
 				}
 												
 			}
-			res.header("Last-Modified", format.format(new Date(file.lastModified())));
+			res.header("Last-Modified", format.format(lastModified));
 			res.header("Expires", "-1");
 			res.header("Cache-Control", "must-revalidate, private");
 			

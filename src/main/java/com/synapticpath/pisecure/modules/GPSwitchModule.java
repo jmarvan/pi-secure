@@ -30,6 +30,8 @@ import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.EventListener;
 import com.synapticpath.pisecure.Module;
+import com.synapticpath.pisecure.SecuritySystem;
+import com.synapticpath.pisecure.SecuritySystem.SystemState;
 import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SystemEvent.Type;
 
@@ -57,7 +59,7 @@ public class GPSwitchModule implements EventListener, Configurable {
 		String switchId = null;
 		int index = 1;
 		do {
-			switchId = config.getProperty("gpswitch."+(index++), index==1);
+			switchId = config.getProperty("gpswitch."+(index++), false);
 			if (switchId != null) {
 				GPSwitch cs = new GPSwitch(switchId);
 				cs.configure(config);
@@ -77,8 +79,10 @@ public class GPSwitchModule implements EventListener, Configurable {
 
 		private String id;
 		
-		private SystemEvent.Type switchOnAt;
-		private SystemEvent.Type switchOffAt;
+		private SystemEvent.Type switchOnType;
+		private SecuritySystem.SystemState switchOnState;
+		private SystemEvent.Type switchOffType;
+		private SecuritySystem.SystemState switchOffState;
 		
 
 		public GPSwitch(String id) {
@@ -87,8 +91,12 @@ public class GPSwitchModule implements EventListener, Configurable {
 
 		public void configure(Config config) {
 			
-			switchOnAt = Type.valueOf(config.getProperty("gpswitch." + id + ".on.event.type", false));
-			switchOffAt = Type.valueOf(config.getProperty("gpswitch." + id + ".off.event.type", false));
+			switchOnType = Type.valueOf(config.getProperty("gpswitch." + id + ".on.event.type", false));
+			String onState = config.getProperty("gpswitch." + id + ".on.event.state", false);
+			switchOnState = onState == null ? null : SystemState.valueOf(onState);
+			switchOffType = Type.valueOf(config.getProperty("gpswitch." + id + ".off.event.type", false));
+			String offState = config.getProperty("gpswitch." + id + ".off.event.state", false);
+			switchOffState = offState == null ? null : SystemState.valueOf(offState);
 			
 			String pinId = config.getProperty("gpswitch." + id + ".gpioid", true);
 			Pin pin = RaspiPin.getPinByName(pinId);
@@ -107,16 +115,26 @@ public class GPSwitchModule implements EventListener, Configurable {
 		@Override
 		public void onEvent(SystemEvent event) {
 
-			if (event.getType().equals(switchOnAt)) {
-				
-				// Turn the switch on
-				configuredPin.setState(PinState.HIGH);
-				
-			} else if (event.getType().equals(switchOffAt)) {
-				
-				configuredPin.setState(PinState.LOW);
+			if (configuredPin != null) {
+				if (eventTypeMatches(switchOnType, event.getType()) && eventStateMatches(switchOnState, event.getState())) {
+					
+					// Turn the switch on
+					configuredPin.setState(PinState.HIGH);
+					
+				} else if (eventTypeMatches(switchOffType, event.getType()) && eventStateMatches(switchOffState, event.getState())) {
+					
+					configuredPin.setState(PinState.LOW);
+				}
 			}
 
+		}
+		
+		private boolean eventTypeMatches(Type configuredType, Type type) {
+			return configuredType.equals(type); 
+		}
+		
+		private boolean eventStateMatches(SystemState configuredState, SystemState state) {
+			return configuredState == null ? true : configuredState.equals(state);
 		}
 
 	}

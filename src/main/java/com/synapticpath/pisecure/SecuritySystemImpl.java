@@ -40,14 +40,21 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 	
 	private Queue<SystemEvent> queue = new ConcurrentLinkedQueue<SystemEvent>();
 	
-	private Config config;	
+	private Config config;
+	
+	private int armDelay;
+	
+	private Runner armDelayRunner;
+	
+	private Runner delayedAlarmRunner;
 
 	public SecuritySystemImpl() {	
 		state = SystemState.DISARMED;	
 	}
 	
 	public void configure(Config config) {
-		this.config = config;		
+		this.config = config;
+		this.armDelay = Integer.parseInt(config.getProperty("pisecure.arm.delay.millis", "0"));
 	}
 
 	public SystemState getState() {
@@ -84,12 +91,12 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 	
 		switch (event.getType()) {
 			case SENSOR:
-				if (state.isArmed()) {
+				if (state.isArmed() || state.isDelayedAlarm()) {
 					alarm(event);
 				}
 				break;
 			case SETSTATE :
-				this.state = event.getState();
+				setStateFromEvent(event);
 				break;
 				
 			default: break;
@@ -99,16 +106,107 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 
 
 	public void alarm(SystemEvent event) {
-		System.out.println("ALARM!");		
 		
 		SecurityEvent secEvent = new SecurityEvent();
-		secEvent.setSeverity(Severity.HIGH);
 		secEvent.setSource(event.getSource());
 		secEvent.setTime(new Date());
-		secEvent.setType(Type.SETSTATE);	
-		secEvent.setState(SystemState.ALARM);
+		secEvent.setType(Type.SETSTATE);
+		
+		//Start delayed alarm
+		if (state.isArmed() && event.getDelay() > 0) {
+			System.out.println("DELAYED ALARM!");
+			secEvent.setSeverity(Severity.LOW);
+			secEvent.setState(SystemState.DELAYED_ALARM);
+			secEvent.setDelay(event.getDelay());
+			
+		} else if (event.getDelay() == 0) {
+			
+			System.out.println("ALARM!");
+			secEvent.setSeverity(Severity.HIGH);	
+			secEvent.setState(SystemState.ALARM);
+			
+		} else {
+			//We must be in DELAYED_ALARM and delayed sensor is triggered
+			//This changes nothing 
+			return;
+		}
+		
 		accept(secEvent);
 	}
 	
+	private void setStateFromEvent(SystemEvent event) {
+		
+		if (SystemState.ARMED.equals(event.getState()) && armDelay > 0 && !getState().equals(SystemState.DELAYED_ARM)) {
+			SystemEvent delayedEvent = SystemEvent.create(Type.SETSTATE, "system");
+			delayedEvent.setState(SystemState.DELAYED_ARM);			
+			accept(delayedEvent);					
+			
+		} else {		
+			this.state = event.getState();
+			checkDelayedArm(event);
+			checkDelayedAlarm(event);
+		}
+		
+						
+	}
+	
+	private void checkDelayedAlarm(SystemEvent event) {
+		if (delayedAlarmRunner != null) {
+			delayedAlarmRunner.cancel();
+		}
+		
+		if (SystemState.DELAYED_ALARM.equals(event.getState())) {
+			SystemEvent delayedEvent = SystemEvent.create(Type.SETSTATE, "system");
+			delayedEvent.setState(SystemState.ALARM);
+			delayedAlarmRunner = new Runner(delayedEvent, event.getDelay());
+			new Thread(delayedAlarmRunner).start();
+		}
+	}
+	
+	private void checkDelayedArm(SystemEvent event) {
+		if (armDelayRunner != null) {
+			//First cancel pending 
+			armDelayRunner.cancel();
+		}	
+		
+		if (SystemState.DELAYED_ARM.equals(state)) {
+			SystemEvent delayedEvent = SystemEvent.create(Type.SETSTATE, "system");
+			delayedEvent.setState(SystemState.ARMED);
+			armDelayRunner = new Runner(delayedEvent, armDelay);
+			new Thread(armDelayRunner).start();
+		}		
+	}
+	
+	
+	private class Runner implements Runnable {
+		
+		private boolean cancelled;
+		private long delay;
+		private SystemEvent eventToSend;
+		
+		public Runner(SystemEvent eventToSend, long delay) {
+			this.delay = delay;
+			this.eventToSend = eventToSend;
+		}
+		
+		public void cancel() {
+			cancelled = true;
+		}				
+
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(delay);
+				if (!cancelled) {				
+					System.out.println("Firnig delayed event "+eventToSend.toJson());
+					eventToSend.setTime(new Date());
+					accept(eventToSend);
+				}
+			}catch (InterruptedException ie) {
+				
+			}
+		}
+		
+	}
 
 }
