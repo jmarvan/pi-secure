@@ -156,6 +156,7 @@ public class AppTest {
 	@Test
 	public void testAlarm() throws Exception {
 		config.getSystemModule().accept(SystemEvent.create(Type.SETSTATE, "test", SystemState.ARMED));
+		assertEquals(SystemState.DELAYED_ARM, config.getSystemModule().getState());
 		Thread.sleep(600);
 		
 		//At this point the system should be in armed mode.

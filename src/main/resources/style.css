@@ -1,12 +1,12 @@
 body {background-color: #74AFAD;}
 .hidden { display:none; }
 .armed { background-color: red;}
-.delayed_arm { background-color: LawnGreen; animation:delayed_arm_blink 1s step-end infinite;}
+.delayed_arm { background-color: Lime; animation:delayed_arm_blink 1s step-end infinite;}
 .delayed_alarm { background-color: orange; animation:delayed_alarm_blink 1s step-end infinite;}
 .alarm { background-color: red; animation:alarm_blink 1s step-end infinite;}
-.disarmed { background-color: LawnGreen;}
+.disarmed { background-color: Lime;}
 @keyframes alarm_blink {0% {background-color: red} 50% {background-color: darkred}}
-@keyframes delayed_arm_blink {0% {background-color: LawnGreen} 50% {background-color: red}}
+@keyframes delayed_arm_blink {0% {background-color: Lime} 50% {background-color: red}}
 @keyframes delayed_alarm_blink {0% {background-color: orange} 50% {background-color: darkred}}
 .template { display:none;}
 html *{font-size:17px;font-family:serif;font-family: sans-serif; font-family: monospace; }

@@ -65,19 +65,20 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 		
 		if (event.getState() == null) {
 			event.setState(state);
-		}
-				
-		queue.add(event);
-		process();
+		}		
 		
-		//Now handle the event.
-		onEvent(event);
+		queue.add(event);			
+		process();
+				
 	}
 
 	protected void process() {
 
 		SystemEvent event = null;
 		while ((event = queue.poll()) != null) {
+			
+			//First handle the event, ourselves 
+			onEvent(event);
 
 			for (EventListener listener : config.getModules(EventListener.class)) {
 				listener.onEvent(event);
@@ -136,17 +137,14 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 	
 	private void setStateFromEvent(SystemEvent event) {
 		
-		if (SystemState.ARMED.equals(event.getState()) && armDelay > 0 && !getState().equals(SystemState.DELAYED_ARM)) {
-			SystemEvent delayedEvent = SystemEvent.create(Type.SETSTATE, "system");
-			delayedEvent.setState(SystemState.DELAYED_ARM);			
-			accept(delayedEvent);					
-			
-		} else {		
-			this.state = event.getState();
-			checkDelayedArm(event);
-			checkDelayedAlarm(event);
-		}
-		
+		if (event.getState().isArmed() && armDelay > 0 && !getState().isDelayedArm()) {
+			//Change event type to delayed arm if conditions are met.
+			event.setState(SystemState.DELAYED_ARM);			
+		}					
+							
+		this.state = event.getState();
+		checkDelayedArm(event);
+		checkDelayedAlarm(event);
 						
 	}
 	

@@ -36,7 +36,11 @@ public interface SecuritySystem extends Consumer<SystemEvent> {
 		DELAYED_ARM, ARMED, DELAYED_ALARM, ALARM, DISARMED;
 
 		public boolean isArmed() {
-			return this.equals(ARMED) || this.equals(DELAYED_ALARM);
+			return this.equals(ARMED);
+		}
+		
+		public boolean isDelayedArm() {
+			return this.equals(DELAYED_ARM);
 		}
 		
 		public boolean isDelayedAlarm() {
