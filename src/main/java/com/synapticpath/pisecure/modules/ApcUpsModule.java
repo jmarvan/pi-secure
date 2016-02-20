@@ -92,8 +92,8 @@ public class ApcUpsModule implements Configurable {
 		String bChargeValue = statusMap.get("BCHARGE"); 
 		String statusValue = statusMap.get("STATUS");
 		
-		Number chargeValue = DecimalFormat.getInstance().parse(bChargeValue);
-		boolean onBattery = batteryOperation = statusValue.equalsIgnoreCase("ONBATT");
+		Number chargeValue = bChargeValue == null ? 100 : DecimalFormat.getInstance().parse(bChargeValue);
+		boolean onBattery = statusValue.equalsIgnoreCase("ONBATT");
 		
 		if (batteryOperation) {
 			batteryPercent.put(System.currentTimeMillis(), chargeValue.intValue());
@@ -103,13 +103,13 @@ public class ApcUpsModule implements Configurable {
 			}
 		}		
 		
-		if (!batteryOperation && statusValue.equalsIgnoreCase("ONBATT")) {
+		if (!batteryOperation && onBattery) {
 			//Just detected transition to battery operation
 			batteryOperation = true;
 			config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_ON, Severity.LOW, "acpupsd"));
 		}
 		
-		if (batteryOperation && !statusValue.equalsIgnoreCase("ONBATT")) {
+		if (batteryOperation && !onBattery) {
 			batteryPercent.clear();			
 			config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_OFF, Severity.LOW, "acpupsd"));
 		}

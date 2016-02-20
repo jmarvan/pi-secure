@@ -54,7 +54,22 @@ public class SystemEvent implements Exportable {
 		BATTERY_ON,
 		BATTERY_OFF,
 		BATTERY_CRITICAL,
-		SETSTATE
+		SETSTATE;
+		
+		public boolean isSensorEvent() {
+			return SENSOR.equals(this); 
+		}
+		
+		public boolean isStartupEvent() {
+			return STARTUP.equals(this); 
+		}
+		
+		public boolean isShutdownEvent() {
+			return SHUTDOWN.equals(this); 
+		}
+		public boolean isSetstateEvent() {
+			return SETSTATE.equals(this); 
+		}
 	}
 
 	public String getSource() {

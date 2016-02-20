@@ -17,9 +17,7 @@
 */
 package com.synapticpath.raspberry;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -40,7 +38,8 @@ import com.synapticpath.pisecure.modules.LogglyEventLoggerModule;
  */
 public class LogglyTest {
 	
-
+	
+    @Ignore
 	@Test
 	public void test() throws Exception {
 		Config config = new Config();

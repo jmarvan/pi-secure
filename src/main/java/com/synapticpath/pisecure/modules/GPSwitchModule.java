@@ -18,7 +18,9 @@
 package com.synapticpath.pisecure.modules;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
@@ -29,11 +31,9 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.EventListener;
+import com.synapticpath.pisecure.EventPredicate;
 import com.synapticpath.pisecure.Module;
-import com.synapticpath.pisecure.SecuritySystem;
-import com.synapticpath.pisecure.SecuritySystem.SystemState;
 import com.synapticpath.pisecure.model.SystemEvent;
-import com.synapticpath.pisecure.model.SystemEvent.Type;
 
 /**
  * This module configures Raspberry GPIO pins for output to drive a anything
@@ -52,8 +52,12 @@ import com.synapticpath.pisecure.model.SystemEvent.Type;
 public class GPSwitchModule implements EventListener, Configurable {
 
 	private List<GPSwitch> configuredSwitches;
+	
+	private Config config;
 
 	public void configure(Config config) {
+		
+		this.config = config;
 		configuredSwitches = new ArrayList<GPSwitch>();
 		
 		String switchId = null;
@@ -79,10 +83,8 @@ public class GPSwitchModule implements EventListener, Configurable {
 
 		private String id;
 		
-		private SystemEvent.Type switchOnType;
-		private SecuritySystem.SystemState switchOnState;
-		private SystemEvent.Type switchOffType;
-		private SecuritySystem.SystemState switchOffState;
+		private Set<EventPredicate> switchOnPredicates;
+		private Set<EventPredicate> switchOffPredicates;		
 		
 
 		public GPSwitch(String id) {
@@ -91,12 +93,13 @@ public class GPSwitchModule implements EventListener, Configurable {
 
 		public void configure(Config config) {
 			
-			switchOnType = Type.valueOf(config.getProperty("gpswitch." + id + ".on.event.type", false));
-			String onState = config.getProperty("gpswitch." + id + ".on.event.state", false);
-			switchOnState = onState == null ? null : SystemState.valueOf(onState);
-			switchOffType = Type.valueOf(config.getProperty("gpswitch." + id + ".off.event.type", false));
-			String offState = config.getProperty("gpswitch." + id + ".off.event.state", false);
-			switchOffState = offState == null ? null : SystemState.valueOf(offState);
+			switchOnPredicates = new HashSet<>();
+			switchOffPredicates = new HashSet<>();
+			List<String> switchOnPredicateNames = config.getPropertyList("gpswitch." + id + ".on.predicate.");
+			List<String> switchOffPredicateNames = config.getPropertyList("gpswitch." + id + ".off.predicate.");
+			
+			switchOnPredicateNames.forEach(name -> switchOnPredicates.add(EventPredicate.valueOf(name)));
+			switchOffPredicateNames.forEach(name -> switchOffPredicates.add(EventPredicate.valueOf(name)));
 			
 			String pinId = config.getProperty("gpswitch." + id + ".gpioid", true);
 			Pin pin = RaspiPin.getPinByName(pinId);
@@ -116,26 +119,18 @@ public class GPSwitchModule implements EventListener, Configurable {
 		public void onEvent(SystemEvent event) {
 
 			if (configuredPin != null) {
-				if (eventTypeMatches(switchOnType, event.getType()) && eventStateMatches(switchOnState, event.getState())) {
+				if (EventPredicate.test(event, config, switchOnPredicates)) {
 					
 					// Turn the switch on
 					configuredPin.setState(PinState.HIGH);
 					
-				} else if (eventTypeMatches(switchOffType, event.getType()) && eventStateMatches(switchOffState, event.getState())) {
+				} else if (EventPredicate.test(event, config, switchOffPredicates)) {
 					
 					configuredPin.setState(PinState.LOW);
 				}
 			}
 
-		}
-		
-		private boolean eventTypeMatches(Type configuredType, Type type) {
-			return configuredType.equals(type); 
-		}
-		
-		private boolean eventStateMatches(SystemState configuredState, SystemState state) {
-			return configuredState == null ? true : configuredState.equals(state);
-		}
+		}		
 
 	}
 }

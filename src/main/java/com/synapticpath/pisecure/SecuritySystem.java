@@ -50,6 +50,10 @@ public interface SecuritySystem extends Consumer<SystemEvent> {
 		public boolean isAlarm() {
 			return this.equals(ALARM);
 		}
+		
+		public boolean isDisarmed() {
+			return this.equals(DISARMED);
+		}
 
 	}
 	

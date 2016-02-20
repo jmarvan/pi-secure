@@ -18,12 +18,15 @@
 package com.synapticpath.pisecure;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.synapticpath.pisecure.model.SecurityEvent;
-import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SecurityEvent.Severity;
+import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SystemEvent.Type;
 
 /**
@@ -47,14 +50,20 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 	private Runner armDelayRunner;
 	
 	private Runner delayedAlarmRunner;
+	
+	private Set<EventPredicate> eventFilters;
 
 	public SecuritySystemImpl() {	
 		state = SystemState.DISARMED;	
 	}
 	
 	public void configure(Config config) {
+		this.eventFilters = new HashSet<>();
 		this.config = config;
 		this.armDelay = Integer.parseInt(config.getProperty("pisecure.arm.delay.millis", "0"));
+		
+		List<String> eventNames = config.getPropertyList("pisecure.event.filter.");
+		eventNames.forEach(filterName -> eventFilters.add(EventPredicate.valueOf(filterName)));
 	}
 
 	public SystemState getState() {
@@ -62,10 +71,14 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 	}
 	
 	public void accept(SystemEvent event) {
-		
+				
 		if (event.getState() == null) {
 			event.setState(state);
-		}		
+		}
+		
+		if (EventPredicate.test(event, config, eventFilters)) {
+			return;
+		}
 		
 		queue.add(event);			
 		process();
