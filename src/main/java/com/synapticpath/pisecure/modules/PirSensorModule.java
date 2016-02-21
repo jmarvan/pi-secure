@@ -33,6 +33,7 @@ import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.Configurable;
 import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.utils.Logging;
 
 /**
  * This module interfaces with Raspberry PI GPIO pins and configures them for
@@ -73,7 +74,7 @@ public class PirSensorModule implements Configurable {
 		public PirSensor(String id, Consumer<SystemEvent> consumer) {
 			this.id = id;
 			this.consumer = consumer;
-			System.out.println(String.format("Setting up sensor loop with id %s", id));
+			Logging.debug(this, "Setting up sensor loop with id %s", id);
 		}
 		
 		public void configure(Config config) {
@@ -82,7 +83,7 @@ public class PirSensorModule implements Configurable {
 			this.delay = Long.parseLong(config.getProperty("pir.sensor."+id+".delay", "0"));
 			String pinId = config.getProperty("pir.sensor."+id+".gpioid", true);
 
-			System.out.println(String.format("Commissioning pir loop %s on raspberry pin %s.", name, pinId));
+			Logging.info(this, "Commissioning pir loop %s on raspberry pin %s.", name, pinId);
 			Pin pin = RaspiPin.getPinByName(pinId);
 			
 			try {

@@ -32,6 +32,7 @@ import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.model.SecurityEvent;
 import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SecurityEvent.Severity;
+import com.synapticpath.utils.Logging;
 
 /**
  * This module is responsible for sending a Text message through a Http sms gateway service when
@@ -128,8 +129,8 @@ public class HttpSMSNotificationModule implements Disableable, EventListener, Co
 	        //add request header
 	        //con.setRequestProperty("User-Agent", "Mozilla/5.0");
 	        int responseCode = con.getResponseCode();
-	        System.out.println("\nSending 'GET' request to URL : " + url);
-	        System.out.println("Response Code : " + responseCode);
+	        Logging.info(this, "Sending 'GET' request to URL : %s", url);
+	        Logging.info(this, "Response Code : %s", responseCode);
 
 	        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 	        String inputLine;
@@ -141,9 +142,9 @@ public class HttpSMSNotificationModule implements Disableable, EventListener, Co
 	        in.close();
 
 	        //TODO throw exception if response something other than 200
-	        System.out.println(response.toString());
+	        Logging.debug(this, response.toString());
     	} catch (Exception e) {
-    		System.out.println("Could not send SMS notification to recipient "+args[1]);
+    		Logging.error(this, "Could not send SMS notification to recipient %s", args[1]);
     		e.printStackTrace();
     	}
 		

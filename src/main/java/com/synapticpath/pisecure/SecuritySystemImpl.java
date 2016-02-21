@@ -28,6 +28,7 @@ import com.synapticpath.pisecure.model.SecurityEvent;
 import com.synapticpath.pisecure.model.SecurityEvent.Severity;
 import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SystemEvent.Type;
+import com.synapticpath.utils.Logging;
 
 /**
  * This is the brain of the Pi-Secure security system.  It evaluates events sent
@@ -128,14 +129,14 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 		
 		//Start delayed alarm
 		if (state.isArmed() && event.getDelay() > 0) {
-			System.out.println("DELAYED ALARM!");
+			Logging.info(this, "DELAYED ALARM!");
 			secEvent.setSeverity(Severity.LOW);
 			secEvent.setState(SystemState.DELAYED_ALARM);
 			secEvent.setDelay(event.getDelay());
 			
 		} else if (event.getDelay() == 0) {
 			
-			System.out.println("ALARM!");
+			Logging.info(this, "ALARM!");
 			secEvent.setSeverity(Severity.HIGH);	
 			secEvent.setState(SystemState.ALARM);
 			
@@ -209,7 +210,7 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 			try {
 				Thread.sleep(delay);
 				if (!cancelled) {				
-					System.out.println("Firnig delayed event "+eventToSend.toJson());
+					Logging.info(this, "Firnig delayed event %s", eventToSend.toJson());
 					eventToSend.setTime(new Date());
 					accept(eventToSend);
 				}

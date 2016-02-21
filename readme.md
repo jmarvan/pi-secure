@@ -14,15 +14,15 @@ This project has been created with the hopes that it will provide resources to h
 3. ~~Add APC UPS battery operation detection Module + handle warnings.~~
 4. ~~Implement delayed system arming.~~
 5. ~~Implement delayed alarm.~~
+6. ~~Improve logging (perhaps using standard logging library).~~
 
 ### Version 1.1 features
 1. Research RF communication and develop Modules to handle RF sensors.
 2. Devise the ability for the UI to arm/disarm specific sensor loops.
 3. Add Module control to the UI.
 4. Add Multi-Language UI support.
-5. Improve logging (perhaps using standard logging library).
-6. Develop configurable siren shut-off, we don't want it to go on forever.
-7. Add module white-listing (load only those modules that are wanted)
+5. Develop configurable siren shut-off, we don't want it to go on forever.
+6. Add module white-listing (load only those modules that are wanted)
 
 ### Version 1.x features
 1. Develop GSM Messaging Module

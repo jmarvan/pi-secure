@@ -21,7 +21,6 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.webSocket;
 
-import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +36,7 @@ import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
 import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SystemEvent.Type;
+import com.synapticpath.utils.Logging;
 
 import spark.Request;
 import spark.Response;
@@ -64,7 +64,7 @@ public class HtmlUIModule implements Configurable, EventListener {
 	@Override
 	public void onEvent(SystemEvent event) {
 		if (event.getType().equals(Type.SETSTATE)) {
-			System.out.println("HtmlUIModule intercepted setstate to : "+event.getState());
+			Logging.info(this, "HtmlUIModule intercepted setstate to : %s",event.getState());
 			WebSocketHandler.broadcastState(event.getState());
 		}
 	}
@@ -151,11 +151,15 @@ public class HtmlUIModule implements Configurable, EventListener {
 			
 			if (value != null && !value.isEmpty()) {
 				
-				Date d = format.parse(value);
-				
-				if (lastModified.getTime() <= d.getTime()) {
-					res.status(304);
-					return;
+				try {
+					Date d = format.parse(value);
+					
+					if (lastModified.getTime() <= d.getTime()) {
+						res.status(304);
+						return;
+					}
+				} catch (Exception e) {
+					Logging.error(this, "Error parsing If-Modified-Since value %s  of %s", e, value, resourceName);
 				}
 												
 			}

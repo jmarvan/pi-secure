@@ -73,12 +73,15 @@ public class ApcUpsModule implements Configurable {
 		
 		Runnable runnable = () -> {
 			while (true) {
-				try {
-					evaluateStatus();
-					Thread.sleep(pollInterval);
+				try {					
+					evaluateStatus();					
 				} catch (Exception e) {
 					e.printStackTrace();		
-					break;
+				} finally {
+					try {
+						Thread.sleep(pollInterval);
+					} catch (InterruptedException e) {						
+					}
 				}
 			}
 		};
@@ -99,19 +102,19 @@ public class ApcUpsModule implements Configurable {
 			batteryPercent.put(System.currentTimeMillis(), chargeValue.intValue());
 
 			if (batteryCriticalReached()) {
-				config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_CRITICAL, Severity.HIGH, "acpupsd"));
+				config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_CRITICAL, Severity.HIGH, "apcups"));
 			}
 		}		
 		
 		if (!batteryOperation && onBattery) {
 			//Just detected transition to battery operation
 			batteryOperation = true;
-			config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_ON, Severity.LOW, "acpupsd"));
+			config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_ON, Severity.LOW, "apcups"));
 		}
 		
 		if (batteryOperation && !onBattery) {
 			batteryPercent.clear();			
-			config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_OFF, Severity.LOW, "acpupsd"));
+			config.getSystemModule().accept(SecurityEvent.create(Type.BATTERY_OFF, Severity.LOW, "apcups"));
 		}
 		
 		batteryOperation = onBattery;

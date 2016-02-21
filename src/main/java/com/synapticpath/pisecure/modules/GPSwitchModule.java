@@ -34,6 +34,7 @@ import com.synapticpath.pisecure.EventListener;
 import com.synapticpath.pisecure.EventPredicate;
 import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.utils.Logging;
 
 /**
  * This module configures Raspberry GPIO pins for output to drive a anything
@@ -103,7 +104,7 @@ public class GPSwitchModule implements EventListener, Configurable {
 			
 			String pinId = config.getProperty("gpswitch." + id + ".gpioid", true);
 			Pin pin = RaspiPin.getPinByName(pinId);
-			System.out.println(String.format("Commissioning general purpose switch %s on raspberry pin %s.", id, pinId));
+			Logging.info(this, "Commissioning general purpose switch %s on raspberry pin %s.", id, pinId);
 
 			try {
 				final GpioController gpio = GpioFactory.getInstance();

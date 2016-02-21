@@ -34,6 +34,7 @@ import com.synapticpath.pisecure.EventListener;
 import com.synapticpath.pisecure.Module;
 import com.synapticpath.pisecure.model.SecurityEvent;
 import com.synapticpath.pisecure.model.SystemEvent;
+import com.synapticpath.utils.Logging;
 
 /**
  * This module is responsible for turning SecurityEvents into texts in order
@@ -135,7 +136,7 @@ public class SMTPNotificationModule implements Disableable, EventListener, Confi
 
 		// Send message
 		Transport.send(message);
-		System.out.println("Sent message successfully....");
+		Logging.debug(this, "Sent message successfully ....");
 
 	}
 

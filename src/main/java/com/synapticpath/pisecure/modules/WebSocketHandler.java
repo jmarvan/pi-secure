@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import com.synapticpath.pisecure.Config;
 import com.synapticpath.pisecure.SecuritySystem.SystemState;
+import com.synapticpath.utils.Logging;
 
 /**
  * Required by the Jetty websocket api to handle websockets.  This
@@ -45,7 +46,7 @@ public class WebSocketHandler  {
 	
 	@OnWebSocketConnect
 	public void onConnect(Session user) throws Exception {
-		System.out.println("Added websocket session");
+		Logging.debug(this, "Added websocket session");
 		sessions.add(user);
 		broadcastState(config.getSystemModule().getState());
 	}
@@ -53,12 +54,12 @@ public class WebSocketHandler  {
 	@OnWebSocketClose
 	public void onClose(Session user, int statusCode, String reason) {
 		sessions.remove(user);
-		System.out.println("UI websocket session ended.");
+		Logging.debug(this, "UI websocket session ended.");
 	}
 
 	@OnWebSocketMessage
 	public void onMessage(Session user, String message) {
-		System.out.println("Incoming websocked message.");
+		Logging.debug(this, "Incoming websocked message.");
 	}
 	
 	public static void broadcastState(SystemState state) {

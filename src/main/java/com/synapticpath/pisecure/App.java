@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SystemEvent.Type;
+import com.synapticpath.utils.Logging;
 import com.synapticpath.utils.Reflection;
 
 /**
@@ -60,7 +61,7 @@ public class App {
 		 for (Class<Object> moduleClass : getModules()) {		
 			 
 			 //TODO Implement module blacklist - blacklisted modules will not be loaded nor configured.
-			 System.out.println("Loading Module : "+moduleClass.getName());
+			 Logging.info(this, "Loading Module : %s ", moduleClass.getName());
 			 config.addModule(loadModule(moduleClass));
 			 
 		 }		

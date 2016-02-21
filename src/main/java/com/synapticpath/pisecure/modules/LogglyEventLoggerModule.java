@@ -38,6 +38,7 @@ import com.synapticpath.pisecure.SecuritySystem.SystemState;
 import com.synapticpath.pisecure.model.PaginatedList;
 import com.synapticpath.pisecure.model.SystemEvent;
 import com.synapticpath.pisecure.model.SystemEvent.Type;
+import com.synapticpath.utils.Logging;
 
 /**
  * This module is responsible for sending incoming events to Loggly logging service.
@@ -182,7 +183,7 @@ public class LogglyEventLoggerModule implements Disableable, EventLogger, Config
 			sb.append(inputLine);
 		}
 		in.close();
-		System.out.println(sb.toString());
+		Logging.debug(this, sb.toString());
 		
 		obj = new JSONObject(sb.toString());
 		int total = obj.getInt("total_events");
@@ -196,7 +197,7 @@ public class LogglyEventLoggerModule implements Disableable, EventLogger, Config
 				}
 			});
 		
-		items.forEach(item -> System.out.println(item));
+		items.forEach(item -> Logging.trace(this, item.toJson()));
 		
 		PaginatedList<SystemEvent> pl = PaginatedList.create(total, page * pageSize, pageSize, items);
 		return pl;
