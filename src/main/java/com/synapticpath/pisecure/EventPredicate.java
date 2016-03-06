@@ -31,7 +31,7 @@ import com.synapticpath.pisecure.model.SystemEvent;
  */
 public enum EventPredicate implements BiPredicate<SystemEvent, Config> {
 
-	DELAYED_ARM_SENSOR_EVENT((SystemEvent event, Config config) -> event.getType().isSensorEvent() && config.getSystemModule().getState().isDelayedArm()),
+	UNARMED_SENSOR_EVENT((SystemEvent event, Config config) -> event.getType().isSensorEvent() && !config.getSystemModule().getState().isArmed()),
 	DELAYED_ARM_SETSTATE_EVENT((SystemEvent event, Config config) -> event.getType().isSetstateEvent() && event.getState().isDelayedArm()),
 	DISARMED_SETSTATE_EVENT((SystemEvent event, Config config) -> event.getType().isSetstateEvent() && event.getState().isDisarmed()),
 	STARTUP_EVENT((SystemEvent event, Config config) -> event.getType().isStartupEvent()),

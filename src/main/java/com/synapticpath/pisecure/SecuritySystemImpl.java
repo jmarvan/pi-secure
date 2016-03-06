@@ -75,34 +75,35 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 				
 		if (event.getState() == null) {
 			event.setState(state);
-		}
-		
-		if (EventPredicate.test(event, config, eventFilters)) {
-			return;
-		}
+		}		
 		
 		queue.add(event);			
 		process();
 				
 	}
 
-	protected void process() {
+	protected synchronized void process() {
 
 		SystemEvent event = null;
 		while ((event = queue.poll()) != null) {
 			
-			//First handle the event, ourselves 
-			onEvent(event);
+			if (!EventPredicate.test(event, config, eventFilters) && onEvent(event)) {
 
-			for (EventListener listener : config.getModules(EventListener.class)) {
-				listener.onEvent(event);
-			}
+				for (EventListener listener : config.getModules(EventListener.class)) {
+					listener.onEvent(event);
+				}
+				
+			}						
 		}
 				
 	}
 		
-	
-	protected void onEvent(SystemEvent event) {	
+	/**
+	 * When true returned, event will not be sent to listeners.
+	 * @param event
+	 * @return
+	 */
+	protected boolean onEvent(SystemEvent event) {	
 	
 		switch (event.getType()) {
 			case SENSOR:
@@ -117,15 +118,13 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 			default: break;
 		}
 		
+		return true;
 	}
 
 
 	public void alarm(SystemEvent event) {
 		
-		SecurityEvent secEvent = new SecurityEvent();
-		secEvent.setSource(event.getSource());
-		secEvent.setTime(new Date());
-		secEvent.setType(Type.SETSTATE);
+		SecurityEvent secEvent = SecurityEvent.create(Type.SETSTATE, Severity.HIGH, event.getSource());		
 		
 		//Start delayed alarm
 		if (state.isArmed() && event.getDelay() > 0) {
@@ -136,8 +135,7 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 			
 		} else if (event.getDelay() == 0) {
 			
-			Logging.info(this, "ALARM!");
-			secEvent.setSeverity(Severity.HIGH);	
+			Logging.info(this, "ALARM!");	
 			secEvent.setState(SystemState.ALARM);
 			
 		} else {

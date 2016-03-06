@@ -99,7 +99,7 @@ public class PirSensorModule implements Configurable {
 		                if (activeState.equals(event.getState())) {
 		                	SystemEvent secEvent = new SystemEvent();
 		                	secEvent.setSource(name);
-		                	secEvent.setTime(new Date(System.currentTimeMillis()));
+		                	secEvent.setTime(new Date());
 		                	secEvent.setType(SystemEvent.Type.SENSOR);
 		                	secEvent.setDelay(delay);
 		                	consumer.accept(secEvent);
