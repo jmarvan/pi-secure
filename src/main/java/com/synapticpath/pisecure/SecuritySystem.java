@@ -34,6 +34,10 @@ public interface SecuritySystem extends Consumer<SystemEvent> {
 	
 	public static enum SystemState {
 		DELAYED_ARM, ARMED, DELAYED_ALARM, ALARM, DISARMED;
+		
+		public boolean isActive() {
+			return this.equals(ARMED) || this.equals(ALARM) || this.equals(DELAYED_ALARM);
+		}
 
 		public boolean isArmed() {
 			return this.equals(ARMED);

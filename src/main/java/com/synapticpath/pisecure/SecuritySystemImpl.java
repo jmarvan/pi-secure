@@ -139,12 +139,11 @@ public class SecuritySystemImpl implements SecuritySystem, Configurable {
 			secEvent.setState(SystemState.ALARM);
 			
 		} else {
-			//We must be in DELAYED_ALARM and delayed sensor is triggered
-			//This changes nothing 
+			//We must be in DELAYED_ALARM and delayed sensor is triggered - this changes nothing 
 			return;
 		}
 		
-		accept(secEvent);
+		queue.add(secEvent);
 	}
 	
 	private void setStateFromEvent(SystemEvent event) {
