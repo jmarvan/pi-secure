@@ -41,7 +41,7 @@ import com.synapticpath.pisecure.model.SystemEvent.Type;
  * @author jmarvan@synapticpath.com
  *
  */
-@Module
+
 public class ApcUpsModule implements Configurable {
 	
 	private static final Pattern kvPattern = Pattern.compile("\\ *:\\ *");
